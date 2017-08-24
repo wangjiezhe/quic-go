@@ -324,7 +324,7 @@ var _ = Describe("StreamFrame", func() {
 				Expect(minLength).To(Equal(minLengthWithoutDataLen - 2))
 			})
 
-			It("calculates the correcct min-length", func() {
+			It("calculates the correct min-length", func() {
 				f := &StreamFrame{
 					StreamID:       0xCAFE,
 					Data:           []byte("foobar"),
@@ -655,69 +655,106 @@ var _ = Describe("StreamFrame", func() {
 	Context("shortening of StreamIDs", func() {
 		It("determines the length of a 1 byte StreamID", func() {
 			f := &StreamFrame{StreamID: 0xFF}
-			Expect(f.calculateStreamIDLength()).To(Equal(uint8(1)))
+			Expect(f.getStreamIDLength()).To(BeEquivalentTo(1))
 		})
 
 		It("determines the length of a 2 byte StreamID", func() {
 			f := &StreamFrame{StreamID: 0xFFFF}
-			Expect(f.calculateStreamIDLength()).To(Equal(uint8(2)))
+			Expect(f.getStreamIDLength()).To(BeEquivalentTo(2))
 		})
 
 		It("determines the length of a 3 byte StreamID", func() {
 			f := &StreamFrame{StreamID: 0xFFFFFF}
-			Expect(f.calculateStreamIDLength()).To(Equal(uint8(3)))
+			Expect(f.getStreamIDLength()).To(BeEquivalentTo(3))
 		})
 
 		It("determines the length of a 4 byte StreamID", func() {
 			f := &StreamFrame{StreamID: 0xFFFFFFFF}
-			Expect(f.calculateStreamIDLength()).To(Equal(uint8(4)))
+			Expect(f.getStreamIDLength()).To(BeEquivalentTo(4))
 		})
 	})
 
 	Context("shortening of Offsets", func() {
-		It("determines length 0 of offset 0", func() {
-			f := &StreamFrame{Offset: 0}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(0)))
+		Context("for the gQUIC STREAM_FRAME format", func() {
+			version := protocol.Version39
+
+			It("determines length 0 of offset 0", func() {
+				f := &StreamFrame{Offset: 0}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(0)))
+			})
+
+			It("determines the length of a 2 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(2)))
+			})
+
+			It("determines the length of a 2 byte offset, even if it would fit into 1 byte", func() {
+				f := &StreamFrame{Offset: 0x1}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(2)))
+			})
+
+			It("determines the length of a 3 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(3)))
+			})
+
+			It("determines the length of a 4 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(4)))
+			})
+
+			It("determines the length of a 5 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(5)))
+			})
+
+			It("determines the length of a 6 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(6)))
+			})
+
+			It("determines the length of a 7 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(7)))
+			})
+
+			It("determines the length of an 8 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(8)))
+			})
 		})
 
-		It("determines the length of a 2 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(2)))
-		})
+		Context("for the IETF STREAM_FRAME format", func() {
+			version := protocol.Version41
 
-		It("determines the length of a 2 byte offset, even if it would fit into 1 byte", func() {
-			f := &StreamFrame{Offset: 0x1}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(2)))
-		})
+			It("determines length 0 of offset 0", func() {
+				f := &StreamFrame{Offset: 0}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(0)))
+			})
 
-		It("determines the length of a 3 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(3)))
-		})
+			It("determines the length of a 2 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(2)))
+			})
 
-		It("determines the length of a 4 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(4)))
-		})
+			It("determines the length of a 2 byte offset, even if it would fit into 1 byte", func() {
+				f := &StreamFrame{Offset: 0x1}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(2)))
+			})
 
-		It("determines the length of a 5 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(5)))
-		})
+			It("determines the length of a 4 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(4)))
+				f = &StreamFrame{Offset: 0xFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(4)))
+			})
 
-		It("determines the length of a 6 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFFFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(6)))
-		})
-
-		It("determines the length of a 7 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFFFFFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(7)))
-		})
-
-		It("determines the length of an 8 byte offset", func() {
-			f := &StreamFrame{Offset: 0xFFFFFFFFFFFFFFFF}
-			Expect(f.getOffsetLength()).To(Equal(protocol.ByteCount(8)))
+			It("determines the length of a 8 byte offset", func() {
+				f := &StreamFrame{Offset: 0xFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(8)))
+				f = &StreamFrame{Offset: 0xFFFFFFFFFFFFFFFF}
+				Expect(f.getOffsetLength(version)).To(Equal(protocol.ByteCount(8)))
+			})
 		})
 	})
 

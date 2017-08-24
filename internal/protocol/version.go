@@ -10,6 +10,8 @@ const (
 	Version37 VersionNumber = 37 + iota
 	Version38
 	Version39
+	Version40 // does not exist
+	Version41
 	VersionTLS         VersionNumber = 101
 	VersionWhatever    VersionNumber = 0 // for when the version doesn't matter
 	VersionUnsupported VersionNumber = -1
@@ -19,6 +21,7 @@ const (
 // SupportedVersions lists the versions that the server supports
 // must be in sorted descending order
 var SupportedVersions = []VersionNumber{
+	Version41,
 	Version39,
 	Version38,
 	Version37,
