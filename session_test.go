@@ -82,7 +82,8 @@ func (h *mockSentPacketHandler) SentPacket(packet *ackhandler.Packet) error {
 	h.sentPackets = append(h.sentPackets, packet)
 	return nil
 }
-func (h *mockSentPacketHandler) ReceivedAck(ackFrame *wire.AckFrame, withPacketNumber protocol.PacketNumber, recvTime time.Time) error {
+
+func (h *mockSentPacketHandler) ReceivedAck(ackFrame *wire.AckFrame, withPacketNumber protocol.PacketNumber, encLevel protocol.EncryptionLevel, recvTime time.Time) error {
 	return nil
 }
 func (h *mockSentPacketHandler) SetHandshakeComplete()                  {}
@@ -498,7 +499,7 @@ var _ = Describe("Session", func() {
 			err := sess.handleFrames([]wire.Frame{&wire.RstStreamFrame{
 				StreamID:  5,
 				ErrorCode: 42,
-			}})
+			}}, protocol.EncryptionUnspecified)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -576,35 +577,35 @@ var _ = Describe("Session", func() {
 			err = sess.handleFrames([]wire.Frame{&wire.WindowUpdateFrame{
 				StreamID:   5,
 				ByteOffset: 1337,
-			}})
+			}}, protocol.EncryptionUnspecified)
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
 
 	It("handles PING frames", func() {
-		err := sess.handleFrames([]wire.Frame{&wire.PingFrame{}})
+		err := sess.handleFrames([]wire.Frame{&wire.PingFrame{}}, protocol.EncryptionUnspecified)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("handles BLOCKED frames", func() {
-		err := sess.handleFrames([]wire.Frame{&wire.BlockedFrame{}})
+		err := sess.handleFrames([]wire.Frame{&wire.BlockedFrame{}}, protocol.EncryptionUnspecified)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("errors on GOAWAY frames", func() {
-		err := sess.handleFrames([]wire.Frame{&wire.GoawayFrame{}})
+		err := sess.handleFrames([]wire.Frame{&wire.GoawayFrame{}}, protocol.EncryptionUnspecified)
 		Expect(err).To(MatchError("unimplemented: handling GOAWAY frames"))
 	})
 
 	It("handles STOP_WAITING frames", func() {
-		err := sess.handleFrames([]wire.Frame{&wire.StopWaitingFrame{LeastUnacked: 10}})
+		err := sess.handleFrames([]wire.Frame{&wire.StopWaitingFrame{LeastUnacked: 10}}, protocol.EncryptionUnspecified)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("handles CONNECTION_CLOSE frames", func(done Done) {
 		go sess.run()
 		str, _ := sess.GetOrOpenStream(5)
-		err := sess.handleFrames([]wire.Frame{&wire.ConnectionCloseFrame{ErrorCode: 42, ReasonPhrase: "foobar"}})
+		err := sess.handleFrames([]wire.Frame{&wire.ConnectionCloseFrame{ErrorCode: 42, ReasonPhrase: "foobar"}}, protocol.EncryptionUnspecified)
 		Expect(err).NotTo(HaveOccurred())
 		Eventually(sess.Context().Done()).Should(BeClosed())
 		_, err = str.Read([]byte{0})
@@ -1599,11 +1600,11 @@ var _ = Describe("Session", func() {
 			})
 			err := sess.handleFrames([]wire.Frame{&wire.AckFrame{
 				LargestAcked: 1,
-			}})
+			}}, protocol.EncryptionUnspecified)
 			Expect(err).NotTo(HaveOccurred())
 			err = sess.handleFrames([]wire.Frame{&wire.AckFrame{
 				LargestAcked: 1,
-			}})
+			}}, protocol.EncryptionUnspecified)
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
