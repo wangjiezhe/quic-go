@@ -1,16 +1,29 @@
 package protocol
 
 import (
+	"net"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Version", func() {
+	isReservedVersion := func(v VersionNumber) bool {
+		return v&0x0f0f0f0f == 0x0a0a0a0a
+	}
+
 	It("says if a version supports TLS", func() {
 		Expect(Version37.UsesTLS()).To(BeFalse())
 		Expect(Version38.UsesTLS()).To(BeFalse())
 		Expect(Version39.UsesTLS()).To(BeFalse())
 		Expect(VersionTLS.UsesTLS()).To(BeTrue())
+	})
+
+	It("versions don't have reserved version numbers", func() {
+		Expect(isReservedVersion(Version37)).To(BeFalse())
+		Expect(isReservedVersion(Version38)).To(BeFalse())
+		Expect(isReservedVersion(Version39)).To(BeFalse())
+		Expect(isReservedVersion(VersionTLS)).To(BeFalse())
 	})
 
 	It("has the right string representation", func() {
@@ -64,5 +77,16 @@ var _ = Describe("Version", func() {
 			Expect(ChooseSupportedVersion(supportedVersions, []VersionNumber{1, 2})).To(Equal(VersionUnsupported))
 			Expect(ChooseSupportedVersion(supportedVersions, []VersionNumber{})).To(Equal(VersionUnsupported))
 		})
+	})
+
+	It("creates reserved version numbers", func() {
+		addr := &net.UDPAddr{IP: net.IPv4(192, 168, 100, 1), Port: 1337}
+		versions := make(map[VersionNumber]bool)
+		for i := 0; i < 1000; i++ {
+			v := GenerateReservedVersion(addr, VersionNumber(i))
+			Expect(isReservedVersion(v)).To(BeTrue())
+			versions[v] = true
+		}
+		Expect(len(versions)).To(BeNumerically(">", 500))
 	})
 })

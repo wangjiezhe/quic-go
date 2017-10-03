@@ -1,9 +1,14 @@
 package protocol
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+	"hash/fnv"
+	"net"
+)
 
 // VersionNumber is a version number as int
-type VersionNumber int
+type VersionNumber int32
 
 // The version numbers, making grepping easier
 const (
@@ -78,4 +83,14 @@ func ChooseSupportedVersion(ours, theirs []VersionNumber) VersionNumber {
 		}
 	}
 	return VersionUnsupported
+}
+
+// GenerateReservedVersion generates a reserved version number (v & 0x0f0f0f0f == 0x0a0a0a0a)
+func GenerateReservedVersion(addr net.Addr, initial VersionNumber) VersionNumber {
+	h := fnv.New32a()
+	h.Write([]byte(addr.String()))
+	buf := make([]byte, 4)
+	binary.BigEndian.PutUint32(buf, uint32(initial))
+	h.Write(buf)
+	return VersionNumber((h.Sum32() | 0x0a0a0a0a) & 0xfafafafa)
 }
