@@ -69,7 +69,7 @@ var _ = Describe("Packet packer", func() {
 		streamsMap := newStreamsMap(nil, nil, protocol.PerspectiveServer, nil)
 		streamsMap.streams[1] = cryptoStream
 		streamsMap.openStreams = []protocol.StreamID{1}
-		streamFramer = newStreamFramer(streamsMap, nil)
+		streamFramer = newStreamFramer(streamsMap, nil, protocol.VersionWhatever)
 
 		packer = &packetPacker{
 			cryptoSetup:           &mockCryptoSetup{encLevelSeal: protocol.EncryptionForwardSecure},

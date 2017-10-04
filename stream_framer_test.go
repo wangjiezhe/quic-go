@@ -42,7 +42,7 @@ var _ = Describe("Stream Framer", func() {
 		streamsMap.putStream(stream2)
 
 		mockFcm = mocks_fc.NewMockFlowControlManager(mockCtrl)
-		framer = newStreamFramer(streamsMap, mockFcm)
+		framer = newStreamFramer(streamsMap, mockFcm, protocol.VersionWhatever)
 	})
 
 	It("says if it has retransmissions", func() {

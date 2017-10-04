@@ -8,6 +8,8 @@ import (
 )
 
 type streamFramer struct {
+	version protocol.VersionNumber
+
 	streamsMap *streamsMap
 
 	flowControlManager flowcontrol.FlowControlManager
@@ -16,10 +18,11 @@ type streamFramer struct {
 	blockedFrameQueue   []*wire.BlockedFrame
 }
 
-func newStreamFramer(streamsMap *streamsMap, flowControlManager flowcontrol.FlowControlManager) *streamFramer {
+func newStreamFramer(streamsMap *streamsMap, flowControlManager flowcontrol.FlowControlManager, v protocol.VersionNumber) *streamFramer {
 	return &streamFramer{
 		streamsMap:         streamsMap,
 		flowControlManager: flowControlManager,
+		version:            v,
 	}
 }
 
@@ -62,7 +65,7 @@ func (f *streamFramer) PopCryptoStreamFrame(maxLen protocol.ByteCount) *wire.Str
 		StreamID: 1,
 		Offset:   cs.writeOffset,
 	}
-	frameHeaderBytes, _ := frame.MinLength(protocol.VersionWhatever) // can never error
+	frameHeaderBytes, _ := frame.MinLength(f.version) // can never error
 	frame.Data = cs.getDataForWriting(maxLen - frameHeaderBytes)
 	return frame
 }
@@ -72,7 +75,7 @@ func (f *streamFramer) maybePopFramesForRetransmission(maxLen protocol.ByteCount
 		frame := f.retransmissionQueue[0]
 		frame.DataLenPresent = true
 
-		frameHeaderLen, _ := frame.MinLength(protocol.VersionWhatever) // can never error
+		frameHeaderLen, _ := frame.MinLength(f.version) // can never error
 		if currentLen+frameHeaderLen >= maxLen {
 			break
 		}
@@ -105,7 +108,7 @@ func (f *streamFramer) maybePopNormalFrames(maxBytes protocol.ByteCount) (res []
 		frame.StreamID = s.streamID
 		// not perfect, but thread-safe since writeOffset is only written when getting data
 		frame.Offset = s.writeOffset
-		frameHeaderBytes, _ := frame.MinLength(protocol.VersionWhatever) // can never error
+		frameHeaderBytes, _ := frame.MinLength(f.version) // can never error
 		if currentLen+frameHeaderBytes > maxBytes {
 			return false, nil // theoretically, we could find another stream that fits, but this is quite unlikely, so we stop here
 		}

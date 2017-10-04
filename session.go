@@ -245,7 +245,7 @@ func (s *session) setup(
 
 	s.flowControlManager = flowcontrol.NewFlowControlManager(s.connParams, s.rttStats)
 	s.streamsMap = newStreamsMap(s.newStream, s.flowControlManager.RemoveStream, s.perspective, s.connParams)
-	s.streamFramer = newStreamFramer(s.streamsMap, s.flowControlManager)
+	s.streamFramer = newStreamFramer(s.streamsMap, s.flowControlManager, s.version)
 	s.packer = newPacketPacker(s.connectionID,
 		s.cryptoSetup,
 		s.connParams,
