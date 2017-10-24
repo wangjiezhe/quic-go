@@ -1,13 +1,15 @@
 package protocol
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // VersionNumber is a version number as int
 type VersionNumber int
 
 // The version numbers, making grepping easier
 const (
-	Version37 VersionNumber = 37 + iota
+	Version37 VersionNumber = 0x51303337 + iota
 	Version38
 	Version39
 	VersionTLS         VersionNumber = 101
@@ -40,19 +42,19 @@ func (vn VersionNumber) String() string {
 	case VersionTLS:
 		return "TLS dev version (WIP)"
 	default:
+		if vn > 0x51303300 && vn <= 0x51303399 {
+			return fmt.Sprintf("gQUIC %x", uint32(vn-0x51303300))
+		}
 		return fmt.Sprintf("%d", vn)
 	}
 }
 
-// VersionNumberToTag maps version numbers ('32') to tags ('Q032')
-func VersionNumberToTag(vn VersionNumber) uint32 {
-	v := uint32(vn)
-	return 'Q' + ((v/100%10)+'0')<<8 + ((v/10%10)+'0')<<16 + ((v%10)+'0')<<24
-}
-
-// VersionTagToNumber is built from VersionNumberToTag in init()
-func VersionTagToNumber(v uint32) VersionNumber {
-	return VersionNumber(((v>>8)&0xff-'0')*100 + ((v>>16)&0xff-'0')*10 + ((v>>24)&0xff - '0'))
+// ToAltSvc returns the representation of the version for the H2 Alt-Svc parameters
+func (vn VersionNumber) ToAltSvc() string {
+	if vn > 0x51303300 && vn <= 0x51303399 {
+		return fmt.Sprintf("%x", uint32(vn-0x51303300))
+	}
+	return fmt.Sprintf("%d", vn)
 }
 
 // IsSupportedVersion returns true if the server supports this version
