@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/lucas-clemente/quic-go/integrationtests/tools/testlog"
 	"github.com/lucas-clemente/quic-go/integrationtests/tools/testserver"
+	"github.com/lucas-clemente/quic-go/internal/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -42,4 +43,6 @@ func init() {
 	}
 	clientPath = filepath.Join(thisfile, fmt.Sprintf("../../../../quic-clients/client-%s-debug", runtime.GOOS))
 	serverPath = filepath.Join(thisfile, fmt.Sprintf("../../../../quic-clients/server-%s-debug", runtime.GOOS))
+
+	utils.SetLogLevel(utils.LogLevelDebug)
 }
