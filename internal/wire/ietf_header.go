@@ -74,6 +74,18 @@ func (h *Header) getHeaderLength() (protocol.ByteCount, error) {
 	return length, nil
 }
 
+func (h *Header) logHeader() {
+	if h.IsLongHeader {
+		utils.Debugf("   Long Header{Type: %#x, ConnectionID: %#x, PacketNumber: %#x, Version: %s}", h.Type, h.ConnectionID, h.PacketNumber, h.Version)
+	} else {
+		connID := "(omitted)"
+		if !h.OmitConnectionID {
+			connID = fmt.Sprintf("%#x", h.ConnectionID)
+		}
+		utils.Debugf("   Short Header{ConnectionID: %s, PacketNumber: %#x, PacketNumberLen: %d, KeyPhase: %d}", connID, h.PacketNumber, h.PacketNumberLen, h.KeyPhase)
+	}
+}
+
 // parseHeader parses the header.
 func parseHeader(b *bytes.Reader, packetSentBy protocol.Perspective) (*Header, error) {
 	typeByte, err := b.ReadByte()
