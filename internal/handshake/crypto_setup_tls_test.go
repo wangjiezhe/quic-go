@@ -1,6 +1,7 @@
 package handshake
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 
@@ -53,8 +54,10 @@ var _ = Describe("TLS Crypto Setup", func() {
 	})
 
 	It("continues shaking hands when mint says that it would block", func() {
+		cs.conn.stream = &bytes.Buffer{}
 		cs.tls = mockhandshake.NewMockmintTLS(mockCtrl)
 		cs.tls.(*mockhandshake.MockmintTLS).EXPECT().Handshake().Return(mint.AlertWouldBlock)
+		cs.tls.(*mockhandshake.MockmintTLS).EXPECT().State().Return(mint.ConnectionState{})
 		cs.tls.(*mockhandshake.MockmintTLS).EXPECT().Handshake().Return(mint.AlertNoAlert)
 		cs.keyDerivation = mockKeyDerivation
 		err := cs.HandleCryptoStream()
