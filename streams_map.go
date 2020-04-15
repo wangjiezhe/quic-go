@@ -3,10 +3,10 @@ package quic
 import (
 	"fmt"
 
-	"github.com/phuslu/quic-go/internal/flowcontrol"
-	"github.com/phuslu/quic-go/internal/handshake"
-	"github.com/phuslu/quic-go/internal/protocol"
-	"github.com/phuslu/quic-go/internal/wire"
+	"github.com/wangjiezhe/quic-go/internal/flowcontrol"
+	"github.com/wangjiezhe/quic-go/internal/handshake"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/wire"
 )
 
 type streamType int

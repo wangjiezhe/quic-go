@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/phuslu/quic-go/internal/protocol"
+import "github.com/wangjiezhe/quic-go/internal/protocol"
 
 // ByteInterval is an interval from one ByteCount to the other
 type ByteInterval struct {

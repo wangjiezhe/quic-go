@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"hash/fnv"
 
-	"github.com/phuslu/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 )
 
 type entryType uint8

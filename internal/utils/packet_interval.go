@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/phuslu/quic-go/internal/protocol"
+import "github.com/wangjiezhe/quic-go/internal/protocol"
 
 // PacketInterval is an interval from one PacketNumber to the other
 type PacketInterval struct {

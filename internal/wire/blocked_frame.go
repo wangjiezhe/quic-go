@@ -3,8 +3,8 @@ package wire
 import (
 	"bytes"
 
-	"github.com/phuslu/quic-go/internal/protocol"
-	"github.com/phuslu/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 )
 
 // A BlockedFrame is a BLOCKED frame

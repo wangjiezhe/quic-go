@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/phuslu/quic-go/internal/crypto"
-	"github.com/phuslu/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/crypto"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
 )
 
 var (

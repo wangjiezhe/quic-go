@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/phuslu/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
 )
 
 type sessionMap struct {

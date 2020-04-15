@@ -3,7 +3,7 @@ package congestion
 import (
 	"time"
 
-	"github.com/phuslu/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 )
 
 const (

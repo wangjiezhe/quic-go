@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/phuslu/quic-go/internal/protocol"
-	"github.com/phuslu/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 )
 
 // A StopWaitingFrame in QUIC

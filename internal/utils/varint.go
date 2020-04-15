@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/phuslu/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
 )
 
 // taken from the QUIC draft

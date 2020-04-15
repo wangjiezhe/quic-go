@@ -3,9 +3,9 @@ package quic
 import (
 	"bytes"
 
-	"github.com/phuslu/quic-go/internal/protocol"
-	"github.com/phuslu/quic-go/internal/wire"
-	"github.com/phuslu/quic-go/qerr"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/wire"
+	"github.com/wangjiezhe/quic-go/qerr"
 )
 
 type unpackedPacket struct {

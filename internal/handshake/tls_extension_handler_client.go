@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/phuslu/quic-go/qerr"
+	"github.com/wangjiezhe/quic-go/qerr"
 
 	"github.com/bifurcation/mint"
 	"github.com/bifurcation/mint/syntax"
-	"github.com/phuslu/quic-go/internal/protocol"
-	"github.com/phuslu/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 )
 
 type extensionHandlerClient struct {
