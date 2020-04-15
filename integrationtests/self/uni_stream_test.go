@@ -6,10 +6,10 @@ import (
 	"net"
 	"sync"
 
-	quic "github.com/lucas-clemente/quic-go"
-	"github.com/lucas-clemente/quic-go/integrationtests/tools/testserver"
-	"github.com/lucas-clemente/quic-go/internal/protocol"
-	"github.com/lucas-clemente/quic-go/internal/testdata"
+	quic "github.com/wangjiezhe/quic-go"
+	"github.com/wangjiezhe/quic-go/integrationtests/tools/testserver"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/testdata"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

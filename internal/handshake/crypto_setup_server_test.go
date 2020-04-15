@@ -10,11 +10,11 @@ import (
 
 	"github.com/bifurcation/mint"
 
-	"github.com/lucas-clemente/quic-go/internal/crypto"
-	"github.com/lucas-clemente/quic-go/internal/mocks/crypto"
-	"github.com/lucas-clemente/quic-go/internal/protocol"
-	"github.com/lucas-clemente/quic-go/internal/utils"
-	"github.com/lucas-clemente/quic-go/qerr"
+	"github.com/wangjiezhe/quic-go/internal/crypto"
+	"github.com/wangjiezhe/quic-go/internal/mocks/crypto"
+	"github.com/wangjiezhe/quic-go/internal/protocol"
+	"github.com/wangjiezhe/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/qerr"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/bifurcation/mint"
-	"github.com/lucas-clemente/quic-go/internal/utils"
+	"github.com/wangjiezhe/quic-go/internal/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
